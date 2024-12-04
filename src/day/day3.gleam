@@ -1,6 +1,7 @@
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/result
 import gleam/string
 import simplifile
 
@@ -9,12 +10,14 @@ pub fn main() {
   let assert Ok(input) = simplifile.read("inputs/day3.txt")
 
   part1(input) |> int.to_string |> io.println
+  part2(input) |> int.to_string |> io.println
 }
 
 fn part1(input: String) -> Int {
   // This doesn't seem the most efficient but feels more readable?
   // Would theoretically break this up, but just moving on for now
-  string.split(input, "mul(")
+  input
+  |> string.split("mul(")
   |> list.filter_map(fn(line) {
     case string.split(line, ")") {
       [first, _, ..] -> Ok(first)
@@ -40,4 +43,14 @@ fn part1(input: String) -> Int {
     }
   })
   |> int.sum
+}
+
+fn part2(input: String) -> Int {
+  input
+  |> string.split("do()")
+  |> list.map(fn(line) {
+    line |> string.split("don't()") |> list.first |> result.unwrap("")
+  })
+  |> string.join("")
+  |> part1
 }
