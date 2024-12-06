@@ -2,6 +2,7 @@ import gleam/dict.{type Dict}
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/order.{Gt, Lt}
 import gleam/pair
 import gleam/set.{type Set}
 import gleam/string
@@ -11,6 +12,7 @@ pub fn main() {
   let assert Ok(input) = simplifile.read("inputs/day5.txt")
 
   part1(input) |> int.to_string |> io.println
+  part2(input) |> int.to_string |> io.println
 }
 
 fn part1(input: String) -> Int {
@@ -21,6 +23,18 @@ fn part1(input: String) -> Int {
     case is_valid(sequence, invalid_rules) {
       True -> total + get_middle(sequence)
       False -> total
+    }
+  })
+}
+
+fn part2(input: String) -> Int {
+  let #(invalid_rules, prints) = get_lists(input)
+
+  prints
+  |> list.fold(0, fn(total, sequence) {
+    case is_valid(sequence, invalid_rules) {
+      True -> total
+      False -> total + { sequence |> rule_sort(invalid_rules) |> get_middle }
     }
   })
 }
@@ -90,6 +104,20 @@ fn is_valid_page(
     }
     Error(_) -> True
   }
+}
+
+fn rule_sort(sequence: List(Int), rule_map: Dict(Int, Set(Int))) -> List(Int) {
+  list.sort(sequence, fn(a, b) {
+    case dict.get(rule_map, a) {
+      Ok(invalid_rules) -> {
+        case set.contains(invalid_rules, b) {
+          True -> Lt
+          False -> Gt
+        }
+      }
+      Error(_) -> Gt
+    }
+  })
 }
 
 fn get_middle(sequence: List(Int)) -> Int {
