@@ -1,3 +1,4 @@
+import util
 import gleam/function
 import gleam/int
 import gleam/io
@@ -56,7 +57,7 @@ fn get_list(input: String) -> List(List(Int)) {
     |> list.map(int.parse)
     |> result.values
   })
-  |> list.filter(not_empty)
+  |> list.filter(util.not_empty)
 }
 
 fn is_valid(sequence: List(Int)) -> Bool {
@@ -93,8 +94,4 @@ fn is_valid_loop(
 fn is_safe_diff(a: Int, b: Int) -> Bool {
   let diff = int.absolute_value(b - a)
   1 <= diff && diff <= 3
-}
-
-fn not_empty(list: List(a)) -> Bool {
-  list != []
 }

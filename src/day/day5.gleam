@@ -1,3 +1,4 @@
+import util
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/io
@@ -50,9 +51,9 @@ fn get_lists(input: String) {
     |> list.map(fn(line) {
       line
       |> string.split_once("|")
-      |> unwrap
-      |> pair.map_first(int_parse_unsafe)
-      |> pair.map_second(int_parse_unsafe)
+      |> util.unwrap
+      |> pair.map_first(util.int_parse_unsafe)
+      |> pair.map_second(util.int_parse_unsafe)
     })
     |> list.fold(dict.new(), fn(invalid_rules, pair) {
       case dict.get(invalid_rules, pair.1) {
@@ -65,11 +66,11 @@ fn get_lists(input: String) {
   let prints =
     sections.1
     |> string.split("\n")
-    |> list.filter(string_not_empty)
+    |> list.filter(util.string_not_empty)
     |> list.map(fn(line) {
       line
       |> string.split(",")
-      |> list.map(int_parse_unsafe)
+      |> list.map(util.int_parse_unsafe)
     })
 
   #(invalid_rules, prints)
@@ -121,20 +122,5 @@ fn rule_sort(sequence: List(Int), rule_map: Dict(Int, Set(Int))) -> List(Int) {
 }
 
 fn get_middle(sequence: List(Int)) -> Int {
-  sequence |> list.drop(list.length(sequence) / 2) |> list.first |> unwrap
-}
-
-fn string_not_empty(string: String) -> Bool {
-  !string.is_empty(string)
-}
-
-fn int_parse_unsafe(string: String) -> Int {
-  string |> int.parse |> unwrap
-}
-
-fn unwrap(result: Result(a, e)) -> a {
-  case result {
-    Ok(v) -> v
-    Error(_) -> panic
-  }
+  sequence |> list.drop(list.length(sequence) / 2) |> list.first |> util.unwrap
 }
